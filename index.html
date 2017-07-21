@@ -1,0 +1,520 @@
+<html>
+<head>
+<title>MutliBoard</title>
+<script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
+<style type="text/css">
+@font-face{
+	font-family:'Tirhuta';
+	src:url('font/Tirhuta.otf');
+}
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 400px;
+	border: thin solid #ccc;
+	margin: 0px auto;
+	text-align: center;
+}
+
+.keyboard button {
+	color: #333;
+	background: #eee;
+	height: 25px;
+	width: 25px;
+	border: 0px;
+	margin: 5px 2px;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+button span {
+	font-size: 10px;
+	font-weight: lighter;
+}
+
+input {
+	width: 100%;
+}
+
+.keyboard {
+	text-align: center;
+	background: #eee;
+	display: inline-block;
+	maring: 0px auto;
+}
+
+#space {
+	width: 100px;
+	background: #ddd;
+}
+</style>
+</head>
+<body>
+	<div id="textbox1"></div>
+	<div>
+		<input id="textbox" />
+	</div>
+
+	<!-- 	<div class="keyboard">
+		<div>
+			<button>&#x0915;&#x094D;</button>
+			<button>q</button>
+			<button>w</button>
+			<button>e</button>
+			<button>r</button>
+			<button>t</button>
+			<button>y</button>
+			<button>u</button>
+			<button>i</button>
+			<button>o</button>
+			<button>p</button>
+		</div>
+		<div>
+			<button>a</button>
+			<button>s</button>
+			<button>d</button>
+			<button>f</button>
+			<button>g</button>
+			<button>h</button>
+			<button>j</button>
+			<button>k</button>
+			<button>l</button>
+		</div>
+		<div>
+			<button id="shift" >&uArr;</button>
+			<button>z</button>
+			<button>x</button>
+			<button>c</button>
+			<button>v</button>
+			<button>b</button>
+			<button>n</button>
+			<button>m</button>
+			<button id="backspace">&larr;</button>
+			<button id="reserve">&darr;</button>
+		</div>
+		<div>
+			<button id="switch">abc</button>
+			<button>,</button>
+			<button>_</button>
+			<button id="space">space</button>
+			<button>/</button>
+			<button>.</button>
+			<button id="ctrl">ctrl</button>
+		</div>
+	</div> -->
+
+	<div class="keyboard">
+		<!-- <div>
+			<button>&#x094C;<span>&#x0914;</span></button>
+			<button>&#x0948;<span>&#x0910;</span></button>
+			<button>&#x093E;<span>&#x0906;</span></button>
+			<button>&#x0940;<span>&#x0908;</span></button>
+			<button>&#x0942;<span>&#x090A;</span></button>
+			
+			<button>&#x0901;<span>&#x0903;</span></button>
+			
+			<button>&#x092C;<span>&#x092D;</span></button>
+			<button>&#x0917;<span>&#x0918;</span></button>
+			<button>&#x0926;<span>&#x0927;</span></button>
+			<button>&#x091C;<span>&#x091D;</span></button>
+			<button>&#x0921;<span>&#x0922;</span></button>
+		</div>
+		<div>
+			<button>&#x094B;<span>&#x0913;</span></button>
+			<button>&#x0947;<span>&#x090F;</span></button>
+			<button>&#x093F;<span>&#x0907;</span></button>
+			<button>&#x0940;<span>&#x0908;</span></button>
+			<button>&#x0941;<span>&#x0909;</span></button>
+			<button>&#x092A;<span>&#x092B;</span></button>
+			<button>&#x0915;<span>&#x0916;</span></button>
+			<button>&#x0924;<span>&#x0925;</span></button>
+			<button>&#x091A;<span>&#x091B;</span></button>
+			<button>&#x091F;<span>&#x0920;</span></button>
+		</div>
+		<div>
+			<button key="shift" >&uArr;</button>
+			<button>&#x094D;<span>&#x0905;</span></button>
+			<button>&#x092E;<span>&#x0902;</span></button>
+			<button>&#x0928;<span>&#x0923;</span></button>
+			<button>&#x092F;<span>&#x0932;</span></button>
+			<button>&#x0930;<span>&#x0935;</span></button>
+			<button>&#x0936;<span>&#x0937;</span></button>
+			<button>&#x0938;<span>&#x0939;</span></button>
+			<button key="backspace">&larr;</button>
+			<button key="reserve">&darr;</button>
+		</div>
+		<div>
+			<button key="switch">abc</button>
+			<button>,</button>
+			<button>?</button>
+			<button key="space" size="4"></button>
+			<button>-</button>
+			<button>.</button>
+			<button key="ctrl">ctrl</button>
+		</div> -->
+	</div>
+
+	<div>
+		<select id="lang-select">
+			<option value="en_us">English - US</option>
+			<option value="hi_in">Hindi - India</option>
+			<option value="kan_in">Kannada - India</option>
+			<option value="tam_in">Tamil - India</option>
+			<option value="ban_in">Bangla - India</option>
+			<option value="mai_in">Maithili - India</option>
+
+		</select>
+	</div>
+	<script type="text/javascript">
+	
+	var keyboards = {};
+	var enKeyMap = {};
+	
+	var keyStatus = {};
+	
+	
+	var currentKeyBoard;
+	keyboards['en_us'] = 
+	               {def:[
+	            	   		[{def:"q"},{def:"w"},{def:"e"}, {def:"r"},{def:"t"},{def:"y"},{def:"u"},{def:"i"},{def:"o"},{def:"p"}],
+	            	   		[{def:"a"},{def:"s"},{def:"d"},{def:"f"},{def:"g"},{def:"h"},{def:"j"},{def:"k"},{def:"l"}],
+	            	   		[{def:"&uArr;", func:"shift", display:"&#x21E7;"},{def:"z"},{def:"x"},{def:"c"},{def:"v"},{def:"b"},{def:"n"},{def:"m"},{def:"backspace", func:"backspace",display:"&#x232b"},
+	            	   		{def:"options;", func:"options",display:"&#x2325"}],
+	            	   		[{def:"abc",func:"ext"},{def:","}, {def:"space",width:4,display:"&nbsp;", background:"#ccc",func:"space"},{def:"-"},{def:"."}]
+	               		],
+	               		shiftShow: false,
+	               		shift: function(){
+	               			$("button").each(function(idx,element){
+	        						var c = $(element).html();
+	        						if(c.length == 1){
+		        						if(c >= 'a' && c <='z'){
+		        							$(element).html(String.fromCharCode(c.charCodeAt(0) + 'A'.charCodeAt(0) - 'a'.charCodeAt(0)));
+		        						}else if(c >= 'A' && c <='Z'){
+		        							$(element).html(String.fromCharCode(c.charCodeAt(0) + 'a'.charCodeAt(0) - 'A'.charCodeAt(0)));
+		        						}
+	        						}
+	        				});
+	               		},
+	               		backspace: function(){},
+	            	   }
+	
+	keyboards['hi_in'] = 
+    {def:[
+ 	   		[{def:"&#x095C;",shift:"&#x090B;"},{def:"&#x094C;",shift:"&#x0914;"},{def:"&#x0948;",shift:"&#x0910;"},{def:"&#x0940;",shift:"&#x0908;"},{def:"&#x0942;",shift:"&#x090A;"},
+ 	   		 {def:"&#x0901;",shift:"&#x0903;"},{def:"&#x092C;",shift:"&#x092D;"},{def:"&#x0917;",shift:"&#x0918;"},{def:"&#x0926;",shift:"&#x0927;"},{def:"&#x091C;",shift:"&#x091D;"},{def:"&#x0921;",shift:"&#x0922;"}],
+ 	   		[{def:"&#x094B;",shift:"&#x0913;"},{def:"&#x0947;",shift:"&#x090F;"},{def:"&#x093F;",shift:"&#x0907;"},	{def:"&#x093E;",shift:"&#x0906;"},{def:"&#x0941;",shift:"&#x0909;"},
+ 	   		 {def:"&#x092A;",shift:"&#x092B;"},	{def:"&#x0915;",shift:"&#x0916;"},{def:"&#x0924;",shift:"&#x0925;"},{def:"&#x091A;",shift:"&#x091B;"},{def:"&#x091F;",shift:"&#x0920;"},],
+			
+ 	   		[{def:"&uArr;", func:"shift", display:"&#x21E7;"},{def:"&#x094D;",shift:"&#x0905;"},{def:"&#x092E;",shift:"&#x0902;"},{def:"&#x0928;",shift:"&#x0923;"},{def:"&#x092F;",shift:"&#x0932;"},
+ 	   		 {def:"&#x0930;",shift:"&#x0935;"},{def:"&#x0936;",shift:"&#x0937;"},{def:"&#x0938;",shift:"&#x0939;"},{def:"&#x20B9;",shift:"&#x0950;"},{def:"backspace", func:"backspace",display:"&#x232b"},
+ 	   		{def:"options;", func:"options",display:"&#x2325"}],
+ 	   		[{def:"abc",func:"ext"},{def:","}, {def:"space",width:4,display:"&nbsp;", background:"#ccc",func:"space"},{def:"-"},{def:"."},{def:"?",shift:"|"}]
+    		],
+    		shiftShow: true,
+
+ 	   }
+	
+	keyboards['kan_in'] = {
+			
+		def : [
+				[{def:"&#x0CCC",shift:"&#x0C94"},{def:"&#x0CC8",shift:"&#x0C90"},{def:"&#x0CBE",shift:"&#x0C86"},{def:"&#x0CC0",shift:"&#x0C88"},{def:"&#x0CC2",shift:"&#x0C8A"},{def:"&#x0C81",shift:"&#x0C83"},{def:"&#x0CAC",shift:"&#x0CAD"},
+				 	{def:"&#x0C97",shift:"&#x0C98"},{def:"&#x0CA6",shift:"&#x0CA7"},{def:"&#x0C9C",shift:"&#x0C9D"},{def:"&#x0CA1",shift:"&#x0CA2"}],
+				 [{def:"&#x0CCB",shift:"&#x0C93"},{def:"&#x0CC7",shift:"&#x0C8F"},{def:"&#x0CBF",shift:"&#x0C87"},{def:"&#x0CC0",shift:"&#x0C88"},{def:"&#x0CC1",shift:"&#x0C89"},{def:"&#x0CAA",shift:"&#x0CAB"},{def:"&#x0C95",shift:"&#x0C96"},
+				  	{def:"&#x0CA4",shift:"&#x0CA5"},{def:"&#x0C9A",shift:"&#x0C9B"},{def:"&#x0C9F",shift:"&#x0CA0"}],
+				  [{def:"&uArr;","func":"shift","display":"&#x21E7;"},{def:"&#x0CCD",shift:"&#x0C85"},{def:"&#x0CAE",shift:"&#x0C82"},{def:"&#x0CA8",shift:"&#x0CA3"},{def:"&#x0CAF",shift:"&#x0CB2"},{def:"&#x0CB0",shift:"&#x0CB5"},
+				   {def:"&#x0CB6",shift:"&#x0CB7"},{def:"&#x0CB8",shift:"&#x0CB9"},{def:"backspace","func":"backspace","display":"&#x232b"},{def:"options;","func":"options","display":"&#x2325"}],
+				[{def:"abc",func:"ext"},{def:","}, {def:"space",width:4,display:"&nbsp;", background:"#ccc",func:"space"},{def:"-"},{def:"."}]
+			],
+		shiftShow: true
+	}
+	
+	keyboards['tam_in'] = {
+			def : [
+[{def:"&#x0BCC",shift:"&#x0B94"},{def:"&#x0BC8",shift:"&#x0B90"},{def:"&#x0BBE",shift:"&#x0B86"},{def:"&#x0BC0",shift:"&#x0B88"},{def:"&#x0BC2",shift:"&#x0B8A"},{def:"&#x0B81",shift:"&#x0B83"},{def:"&#x0BAC",shift:"&#x0BAD"},{def:"&#x0B97",shift:"&#x0B98"},{def:"&#x0BA6",shift:"&#x0BA7"},{def:"&#x0B9C",shift:"&#x0B9D"},{def:"&#x0BA1",shift:"&#x0BA2"}],
+[{def:"&#x0BCB",shift:"&#x0B93"},{def:"&#x0BC7",shift:"&#x0B8F"},{def:"&#x0BBF",shift:"&#x0B87"},{def:"&#x0BC0",shift:"&#x0B88"},{def:"&#x0BC1",shift:"&#x0B89"},{def:"&#x0BAA",shift:"&#x0BAB"},{def:"&#x0B95",shift:"&#x0B96"},{def:"&#x0BA4",shift:"&#x0BA5"},{def:"&#x0B9A",shift:"&#x0B9B"},{def:"&#x0B9F",shift:"&#x0BA0"}],
+[{def:"&uArr;","func":"shift","display":"&#x21E7;"},{def:"&#x0BCD",shift:"&#x0B85"},{def:"&#x0BAE",shift:"&#x0B82"},{def:"&#x0BA8",shift:"&#x0BA3"},{def:"&#x0BAF",shift:"&#x0BB2"},{def:"&#x0BB0",shift:"&#x0BB5"},{def:"&#x0BB6",shift:"&#x0BB7"},{def:"&#x0BB8",shift:"&#x0BB9"},{def:"backspace","func":"backspace","display":"&#x232b"},{def:"options;","func":"options","display":"&#x2325"}],
+[{def:"abc","func":"ext"},{def:","},{def:"space","width":4,"display":"&nbsp;","background":"#ccc","func":"space"},{def:"-"},{def:"."},],     
+			  ]
+	}
+	
+	keyboards['ban_in'] = {
+			def :[
+		[{def:"&#x09CC",shift:"&#x0994"},{def:"&#x09C8",shift:"&#x0990"},{def:"&#x09BE",shift:"&#x0986"},{def:"&#x09C0",shift:"&#x0988"},{def:"&#x09C2",shift:"&#x098A"},{def:"&#x0981",shift:"&#x0983"},{def:"&#x09AC",shift:"&#x09AD"},{def:"&#x0997",shift:"&#x0998"},{def:"&#x09A6",shift:"&#x09A7"},{def:"&#x099C","shift":"&#x099D"},{def:"&#x09A1",shift:"&#x09A2"}],
+		[{def:"&#x09CB",shift:"&#x0993"},{def:"&#x09C7",shift:"&#x098F"},{def:"&#x09BF",shift:"&#x0987"},{def:"&#x09C0",shift:"&#x0988"},{def:"&#x09C1",shift:"&#x0989"},{def:"&#x09AA",shift:"&#x09AB"},{def:"&#x0995",shifts:"&#x0996"},{def:"&#x09A4",shift:"&#x09A5"},{def:"&#x099A",shift:"&#x099B"},{def:"&#x099F",shift:"&#x09A0"}],
+		[{def:"&uArr;","func":"shift","display":"&#x21E7;"},{def:"&#x09CD",shift:"&#x0985"},{def:"&#x09AE",shift:"&#x0982"},{def:"&#x09A8",shift:"&#x09A3"},{def:"&#x09AF",shift:"&#x09B2"},{def:"&#x09B0",shift:"&#x09B5"},{def:"&#x09B6",shift:"&#x09B7"},{def:"&#x09B8",shift:"&#x09B9"},{def:"&#x20A8;"},{def:"backspace","func":"backspace","display":"&#x232b"},{def:"options;","func":"options","display":"&#x2325"}],
+		[{def:"abc","func":"ext"},{def:","},{def:"space",width:4, display:"&nbsp;",background:"#ccc",func:"space"},{def:"-"},{def:"."},{def:"?",shift:"|"},]
+			      ]
+	}
+	
+	keyboards['mai_in'] = {
+			def :[
+	[{"def":"&#x0114CC","shift":"&#x011494"},{"def":"&#x0114C8","shift":"&#x011490"},{"def":"&#x0114BE","shift":"&#x011486"},{"def":"&#x0114C0","shift":"&#x011488"},{"def":"&#x0114C2","shift":"&#x01148A"},{"def":"&#x011481","shift":"&#x011483"},{"def":"&#x0114AC","shift":"&#x0114AD"},{"def":"&#x011497","shift":"&#x011498"},{"def":"&#x0114A6","shift":"&#x0114A7"},{"def":"&#x01149C","shift":"&#x01149D"},{"def":"&#x0114A1","shift":"&#x0114A2"},],
+	[{"def":"&#x0114CB","shift":"&#x011493"},{"def":"&#x0114C7","shift":"&#x01148F"},{"def":"&#x0114BF","shift":"&#x011487"},{"def":"&#x0114C0","shift":"&#x011488"},{"def":"&#x0114C1","shift":"&#x011489"},{"def":"&#x0114AA","shift":"&#x0114AB"},{"def":"&#x011495","shift":"&#x011496"},{"def":"&#x0114A4","shift":"&#x0114A5"},{"def":"&#x01149A","shift":"&#x01149B"},{"def":"&#x01149F","shift":"&#x0114A0"},],
+	[{"def":"&uArr;","func":"shift","display":"&#x21E7;"},{"def":"&#x0114CD","shift":"&#x011485"},{"def":"&#x0114AE","shift":"&#x011482"},{"def":"&#x0114A8","shift":"&#x0114A3"},{"def":"&#x0114AF","shift":"&#x0114B2"},{"def":"&#x0114B0","shift":"&#x0114B5"},{"def":"&#x0114B6","shift":"&#x0114B7"},{"def":"&#x0114B8","shift":"&#x0114B9"},{"def":"&#x20A8;"},{"def":"backspace","func":"backspace","display":"&#x232b"},{"def":"options;","func":"options","display":"&#x2325"},],
+	[{"def":"abc","func":"ext"},{"def":","},{"def":"space","width":4,"display":"&nbsp;","background":"#ccc","func":"space"},{"def":"-"},{"def":"."},{"def":"?","shift":"|"},]
+	],
+	font:"tirhuta"
+	}
+	
+	
+	currentKeyBoard = keyboards['en_us'];
+	
+	for( i = 0; i < keyboards['en_us'].def.length; i++){
+		var row = keyboards['en_us'].def[i];
+		for( j = 0 ; j < row.length; j ++){
+			enKeyMap[row[j].def] = i + "," + j;
+		}
+	}
+	
+	enKeyMap[186] = 1 + "," + 9;
+	enKeyMap[222] = 1 + "," + 10;
+	
+	enKeyMap[188] = 2 + "," + 8;
+	enKeyMap[190] = 2 + "," + 9;
+	enKeyMap[191] = 2 + "," + 10;
+
+	
+	
+	
+	$(function(){
+		var iisiBlocks = {
+					hindi:0x0900,
+					kannada:0x0C80,
+					bangla:0x0980,
+					gujrati:0x0A80,
+					malyalam:0x0D00,
+					tamil: 0x0B80,
+					tirhuta:0x11480
+				}
+		var blocksize = 0x7F;
+		var fromBlock = iisiBlocks.kannada;
+		var toBlock = iisiBlocks.hindi; 
+		
+	function setCurrentKeyBoard(keyBoard){
+		currentKeyBoard = keyBoard;
+		renderKeySet(currentKeyBoard);
+		var font = "Roboto";
+		if(currentKeyBoard.font){
+			font = currentKeyBoard.font;
+		}
+		jQuery("button").css("font-family", font);
+		jQuery("#textbox").css("font-family", font);
+		jQuery("#textbox1").css("font-family", font);
+	}
+		
+	setCurrentKeyBoard(keyboards['en_us']);
+	
+
+	var k = keyboards['hi_in'].def;
+	var s = "";
+	for(var i = 0; i< k.length; i++){
+		r = k[i];
+		s+= "[";
+		for(var j = 0; j < r.length; j++){
+			var ky = {};
+			$.each(r[j], function(key,value){
+				var code = 0;
+				if(value.toString().startsWith("&#")){
+					 code = parseInt(value.replace("&#","0"));
+				}
+					//var code = parseInt(value.replace("&#","0"));
+				 if(code >= iisiBlocks.hindi &&  code <= (iisiBlocks.hindi + blocksize)){
+					 ky[key] = "&#x0" + (code - iisiBlocks.hindi + iisiBlocks.tirhuta).toString(16).toUpperCase();
+				 }else{
+					 
+					ky[key] = value;
+				 }
+			});
+			s += JSON.stringify(ky) + ",";
+		}
+		s+= "],";
+	}
+	console.log(s);
+		
+		
+		
+function attachListeners(){
+			
+	$("button").click(function(){
+		
+		var $txt = jQuery("#textbox");
+	    var caretPos = $txt[0].selectionStart;
+	    var textAreaTxt = $txt.val();
+		
+		if($(this).attr("func") == undefined){
+		    var txtToAdd = $(this).html().charAt(0);
+		    $txt.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos) );
+		}else{
+			var func = $(this).attr("func");
+			if(func == "backspace"){
+				$txt.val(textAreaTxt.substring(0, caretPos-1) + textAreaTxt.substring(caretPos) );
+			}else if(func == "space"){
+				$txt.val(textAreaTxt.substring(0, caretPos) + " " + textAreaTxt.substring(caretPos) );
+			}else if(func == "options"){
+				/* $txt.val(textAreaTxt.substring(0, caretPos) + " " + textAreaTxt.substring(caretPos) ); */
+			}else if(func == "shift" && currentKeyBoard.shift == undefined){
+				$("button").each(function(idx,element){
+					var c = $(element).html().charAt(0);
+					var shiftC = $(element).find("span.shift").html();
+					if(shiftC){
+						$(this).html(shiftC);
+						var $shift = $("<span class='shift'>");
+						if(currentKeyBoard.shiftShow && currentKeyBoard.shiftShow == false){
+							$shift.hide();
+						}
+						$shift.html(c);
+						$(this).append($shift);
+					}
+			});
+			}else{
+				if(currentKeyBoard[func]){
+					currentKeyBoard[func]();
+				}
+			}
+			
+		} 
+		updateText();
+	});
+	
+	$("html, body, div, input").keydown(function(event){
+		var keyCode = event.keyCode;
+		
+		if(!keyStatus[keyCode]){
+			if((keyCode >= 65 && keyCode <= 90)
+					|| enKeyMap[keyCode]){
+				event.preventDefault();
+			}else if(keyCode == 16){
+				$($('button[func=shift]')[0]).trigger('click');
+			}		
+		}
+		
+		keyStatus[keyCode] = true;
+		
+	});
+	
+	$("html, body, div, input").keyup(function(event){
+		var keyCode = event.keyCode;
+		
+		if(keyStatus[keyCode]){
+			if((keyCode >= 65 && keyCode <= 90)
+					|| enKeyMap[keyCode]){
+				event.preventDefault();
+				sendKeyPress(event);
+			} else if(keyCode == 16){
+				$($('button[func=shift]')[0]).trigger('click');
+			}		
+		}
+		
+		keyStatus[keyCode] = false;
+		
+	});
+			
+		}	
+
+function sendKeyPress(event){
+		var pos;
+		if(event.keyCode >= 65 && event.keyCode <= 90 ){
+			var key = (event.keyCode - 65) + 'a'.charCodeAt(0);
+			pos = enKeyMap[String.fromCharCode(key)].split(",");
+		}else{
+			pos = enKeyMap[event.keyCode].split(",");
+		}
+		var row = pos[0] - '0', col = pos[1] - '0';
+		var buttonNumber = 0;
+		for(i = 0 ; i < row ; i++){
+			buttonNumber +=  currentKeyBoard.def[i].length;
+		}
+		if(col >= currentKeyBoard.def[row].length){
+			return;
+		}
+		buttonNumber += col;
+		$($('button')[buttonNumber]).trigger('click');
+		event.stopPropagation();
+	
+}		
+		
+		$("#textbox").on('input propertychange paste cut keypress', function(){
+			updateText();
+		});
+		
+		$("select").change(function(){
+			$keyboardType = $(this).val();
+			setCurrentKeyBoard(keyboards[$keyboardType]);
+		});
+		
+		function updateText(){
+			var text = $("#textbox").val();
+			var result = "";
+			for (var i = 0; i < text.length; i++) {
+				var code = text.charCodeAt(i);
+			    result += String.fromCharCode(text[i]);
+			    if(code >= fromBlock &&  code <= (fromBlock + blocksize)){
+			    	result += String.fromCharCode(code - fromBlock + toBlock);
+			    }else{
+			    	result += String.fromCharCode(code);
+			    }
+			  }
+			$("#textbox1").html(result);
+		}
+		
+	function renderKeySet(keysets,setname){
+		if(!setname){
+			setname = "def";
+		}
+		var $keyboard =  $(".keyboard");
+		var keyset = keysets[setname];
+		var $width = $(".keyboard").width();
+		$(".keyboard").html("");
+		var keywidth = ($width/keyset[0].length)-4;
+		for(i = 0 ;i < keyset.length; i++){
+			var keyRow = keyset[i];
+			var $keyrow = $("<div>");
+			for(j = 0 ;j < keyRow.length; j++){
+				var key = keyRow[j];
+				var $button = $("<button>");
+				if(key.display != undefined){
+					$button.html(key.display);
+				}else{
+					$button.html(key.def);
+				}
+				
+				if(key.background != undefined){
+					$button.css("background", key.background);
+				}
+				
+				if(key.shift){
+					var $shift = $("<span class='shift'>");
+					if(currentKeyBoard.shiftShow && currentKeyBoard.shiftShow == false){
+						$shift.hide();
+					}
+					$shift.html(key.shift);
+					$button.append($shift);
+				}
+				if(key.width){
+					$button.css("width", key.width * keywidth);
+				}else{
+					$button.css("width", keywidth);
+				}
+				
+				if(key.func){
+					$button.attr("func", key.func);
+				}
+				
+				$keyrow.append($button);
+			}
+			$keyboard.append($keyrow);
+		}
+		
+		$($('button')[currentKeyBoard.def[0].length + 3]).css('border-bottom', 'thin solid red');
+		$($('button')[currentKeyBoard.def[0].length + 6]).css('border-bottom', 'thin solid red');
+		
+		$('body').focus();
+		
+		attachListeners();
+	}
+	});
+	
+	</script>
+</body>
+</html>
